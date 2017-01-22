@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 // Deck ...
@@ -124,6 +126,9 @@ func (p *Player) hasBlackJack() bool {
 }
 
 func main() {
+	win := color.New(color.Green, color.Bold)
+	lose := color.New(color.Green, color.Bold)
+
 	deck := Deck{}
 	deck.createDeck()
 	deck.shuffle()
@@ -145,7 +150,7 @@ func main() {
 		p2.Cards = append(p2.Cards, deck.draw())
 
 		if p2.hasBlackJack() {
-			fmt.Printf("You lost, dealer has blackjack\n\n")
+			lose.Printf("You lost, dealer has blackjack\n\n")
 			p2.Wins++
 			continue
 		}
@@ -157,7 +162,7 @@ func main() {
 		p1.totalCards()
 		fmt.Printf("Total: %d\n\n", p1.Total)
 		if p1.hasBlackJack() {
-			fmt.Printf("You won, you have blackjack\n\n")
+			win.Printf("You won, you have blackjack\n\n")
 			p1.Wins++
 			continue
 		}
@@ -179,13 +184,13 @@ func main() {
 						p1.totalCards()
 						fmt.Printf("You drew the card: %v of %s\n", card.Value, card.Suit)
 						if p1.Total > 21 {
-							fmt.Printf("You lost total: %d\n\n", p1.Total)
+							lose.Printf("You lost total: %d\n\n", p1.Total)
 							p2.Wins++
 							break
 						}
 						fmt.Printf("Your total: %d\n\n", p1.Total)
 						if p1.hasBlackJack() {
-							fmt.Printf("You won, you have blackjack\n\n")
+							win.Printf("You won, you have blackjack\n\n")
 							p1.Wins++
 							break
 						}
@@ -202,12 +207,12 @@ func main() {
 				fmt.Printf("%s drew the card: %v of %s\n\n", p2.Name, card.Value, card.Suit)
 				p2.totalCards()
 				if p2.Total > 21 {
-					fmt.Printf("You win, %s when bust with %d\n\n", p2.Name, p2.Total)
+					win.Printf("You win, %s when bust with %d\n\n", p2.Name, p2.Total)
 					p1.Wins++
 					break
 				}
 				if p2.hasBlackJack() {
-					fmt.Printf("You lost, %s has blackjack\n\n", p2.Name)
+					lose.Printf("You lost, %s has blackjack\n\n", p2.Name)
 					p2.Wins++
 					break
 				}
@@ -217,12 +222,12 @@ func main() {
 
 			p2.totalCards()
 			if p2.Total > 21 {
-				fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
+				win.Printf("You win, dealer when bust with %d\n\n", p2.Total)
 				p1.Wins++
 				break
 			}
 			if p2.Total == 21 {
-				fmt.Printf("You lost, dealer has blackjack\n\n")
+				lose.Printf("You lost, dealer has blackjack\n\n")
 				p2.Wins++
 				break
 			}
@@ -231,10 +236,10 @@ func main() {
 				p1.totalCards()
 				p2.totalCards()
 				if p1.Total > p2.Total {
-					fmt.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
+					win.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 					p1.Wins++
 				} else {
-					fmt.Printf("You lost, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
+					lose.Printf("You lost, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 					p2.Wins++
 				}
 				break
@@ -248,7 +253,7 @@ func main() {
 				fmt.Printf("\n\n")
 				break
 			}
-			fmt.Printf("You won %d games.  The %s won %d games\n", p1.Wins, p2.Name, p2.Wins)
+			win.Printf("You won %d games.  The %s won %d games\n", p1.Wins, p2.Name, p2.Wins)
 			return
 		}
 	}
