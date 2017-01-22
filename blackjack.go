@@ -154,7 +154,7 @@ func main() {
 			p2.Cards = append(p2.Cards, deck.draw())
 
 			if p2.isBlackJack() {
-				fmt.Println("You lost, dealer has blackjack")
+				fmt.Printf("You lost, dealer has blackjack\n\n")
 				p2.Wins++
 				continue
 			}
@@ -166,7 +166,7 @@ func main() {
 			p1.totalCards()
 			fmt.Printf("Total: %d\n\n", p1.Total)
 			if p1.isBlackJack() {
-				fmt.Println("You won, you have blackjack")
+				fmt.Printf("You won, you have blackjack\n\n")
 				p1.Wins++
 				continue
 			}
@@ -187,13 +187,13 @@ func main() {
 						p1.totalCards()
 						fmt.Printf("You drew the card: %v of %s\n", card.Value, card.Suit)
 						if p1.Total > 21 {
-							fmt.Printf("You lost total: %d\n", p1.Total)
+							fmt.Printf("You lost total: %d\n\n", p1.Total)
 							p2.Wins++
 							break
 						}
 						fmt.Printf("Your total: %d\n", p1.Total)
 						if p1.isBlackJack() {
-							fmt.Println("You won, you have blackjack")
+							fmt.Printf("You won, you have blackjack\n\n")
 							p1.Wins++
 							break
 						}
@@ -203,15 +203,15 @@ func main() {
 							if p2.Total < 16 {
 								card := deck.draw()
 								p2.Cards = append(p2.Cards, card)
-								fmt.Printf("Dealer drew the card: %v of %s\n", card.Value, card.Suit)
+								fmt.Printf("Dealer drew the card: %v of %s\n\n", card.Value, card.Suit)
 								p2.totalCards()
 								if p2.Total > 21 {
-									fmt.Printf("You win, dealer when bust with %d\n", p2.Total)
+									fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
 									p1.Wins++
 									break
 								}
 								if p2.isBlackJack() {
-									fmt.Println("You lost, dealer has blackjack")
+									fmt.Printf("You lost, dealer has blackjack\n\n")
 									p2.Wins++
 									break
 								}
@@ -226,29 +226,29 @@ func main() {
 
 					p2.totalCards()
 					if p2.Total > 21 {
-						fmt.Printf("You win, dealer when bust with %d\n", p2.Total)
+						fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
 						p1.Wins++
 						break
 					}
 					if p2.Total == 21 {
-						fmt.Println("You lost, dealer has blackjack")
+						fmt.Printf("You lost, dealer has blackjack\n\n")
 						p2.Wins++
 						break
 					}
 
-					if p1Stay {
+					if p1Stay && !p2Stay {
 						if p2.Total < 16 {
 							card := deck.draw()
 							p2.Cards = append(p2.Cards, card)
 							fmt.Printf("Dealer drew the card: %v of %s\n", card.Value, card.Suit)
 							p2.totalCards()
 							if p2.Total > 21 {
-								fmt.Printf("You win, dealer when bust with %d\n", p2.Total)
+								fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
 								p1.Wins++
 								break
 							}
 							if p2.isBlackJack() {
-								fmt.Println("You lost, dealer has blackjack")
+								fmt.Printf("You lost, dealer has blackjack\n\n")
 								p2.Wins++
 								break
 							}
@@ -261,10 +261,10 @@ func main() {
 						p1.totalCards()
 						p2.totalCards()
 						if p1.Total > p2.Total {
-							fmt.Printf("You win, dealer had: %d and you had: %d \n", p2.Total, p1.Total)
+							fmt.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 							p1.Wins++
 						} else {
-							fmt.Printf("You loss, dealer had: %d and you had: %d \n", p2.Total, p1.Total)
+							fmt.Printf("You loss, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 							p2.Wins++
 						}
 						break
@@ -279,7 +279,7 @@ func main() {
 			for {
 				fmt.Scan(&action)
 				if action == "y" {
-					println("")
+					fmt.Printf("\n\n")
 					break
 				}
 				fmt.Printf("You won %d games.  The dealer won %d games\n", p1.Wins, p2.Wins)
