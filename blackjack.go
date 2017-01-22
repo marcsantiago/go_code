@@ -126,8 +126,9 @@ func (p *Player) hasBlackJack() bool {
 }
 
 func main() {
-	win := color.New(color.Green, color.Bold)
-	lose := color.New(color.Green, color.Bold)
+
+	win := color.New(color.FgGreen, color.Bold)
+	lose := color.New(color.FgRed, color.Bold)
 
 	deck := Deck{}
 	deck.createDeck()
