@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"time"
 )
 
 // Deck ...
@@ -64,7 +65,8 @@ func (d *Deck) createDeck() {
 }
 
 func (d *Deck) shuffle() {
-	source := rand.NewSource(rand.Int63())
+	t := time.Now()
+	source := rand.NewSource(t.Unix())
 	r := rand.New(source)
 	arr := r.Perm(52)
 	for i, a := range arr {
