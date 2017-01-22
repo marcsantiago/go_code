@@ -26,15 +26,14 @@ type Player struct {
 	Cards []Card
 }
 
-func createDeck() Deck {
-	var deck Deck
+func (d *Deck) createDeck() {
 	suit := []string{"heart", "spade", "club", "diamond"}
 	royal := []string{"queen", "jack", "king"}
 
 	// add reg cards
 	for i := 1; i < 10; i++ {
 		for _, s := range suit {
-			deck.Cards = append(deck.Cards, Card{
+			d.Cards = append(d.Cards, Card{
 				Suit:    s,
 				Value:   i,
 				IsRoyal: false,
@@ -45,7 +44,7 @@ func createDeck() Deck {
 
 	for _, r := range royal {
 		for _, s := range suit {
-			deck.Cards = append(deck.Cards, Card{
+			d.Cards = append(d.Cards, Card{
 				Suit:    s,
 				Value:   r,
 				IsRoyal: true,
@@ -55,14 +54,13 @@ func createDeck() Deck {
 	}
 
 	for _, s := range suit {
-		deck.Cards = append(deck.Cards, Card{
+		d.Cards = append(d.Cards, Card{
 			Suit:    s,
 			Value:   "ace",
 			IsRoyal: false,
 			IsAce:   true,
 		})
 	}
-	return deck
 }
 
 func (d *Deck) shuffle() {
@@ -80,7 +78,11 @@ func (d *Deck) draw() Card {
 		d.Cards = d.Cards[1:]
 		return card
 	}
-	return Card{}
+	d.createDeck()
+	d.shuffle()
+	card := d.Cards[0]
+	d.Cards = d.Cards[1:]
+	return card
 }
 
 func (p *Player) totalCards() {
@@ -119,7 +121,8 @@ func (p *Player) isBlackJack() bool {
 }
 
 func main() {
-	deck := createDeck()
+	deck := Deck{}
+	deck.createDeck()
 	deck.shuffle()
 
 	fmt.Println("1 player or 2 players: [1, 2]")
@@ -274,8 +277,6 @@ func main() {
 			for {
 				fmt.Scan(&action)
 				if action == "y" {
-					deck = createDeck()
-					deck.shuffle()
 					println("")
 					break
 				}
