@@ -191,7 +191,7 @@ func main() {
 							p2.Wins++
 							break
 						}
-						fmt.Printf("Your total: %d\n", p1.Total)
+						fmt.Printf("Your total: %d\n\n", p1.Total)
 						if p1.isBlackJack() {
 							fmt.Printf("You won, you have blackjack\n\n")
 							p1.Wins++
@@ -264,7 +264,7 @@ func main() {
 							fmt.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 							p1.Wins++
 						} else {
-							fmt.Printf("You loss, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
+							fmt.Printf("You lost, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
 							p2.Wins++
 						}
 						break
