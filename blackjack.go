@@ -29,7 +29,7 @@ type Player struct {
 }
 
 func (d *Deck) createDeck() {
-	suit := []string{"heart", "spade", "club", "diamond"}
+	suit := []string{"hearts", "spades", "clubs", "diamonds"}
 	royal := []string{"queen", "jack", "king"}
 
 	// add reg cards
@@ -134,6 +134,11 @@ func main() {
 	p2.Name = "Computer"
 
 	for {
+		p1.Total = 0
+		p1.Cards = []Card{}
+		p2.Total = 0
+		p2.Cards = []Card{}
+
 		p1.Cards = append(p1.Cards, deck.draw())
 		p2.Cards = append(p2.Cards, deck.draw())
 		p1.Cards = append(p1.Cards, deck.draw())
@@ -163,116 +168,87 @@ func main() {
 		var p1Stay = false
 		var p2Stay = false
 		for {
-			fmt.Printf("What will you do, hit or stay [h, s]\n ")
-			fmt.Scan(&action)
-			action = strings.ToLower(action)
-			if strings.Contains(action, "h") || strings.Contains(action, "s") {
-				if strings.Contains(action, "h") {
-					card := deck.draw()
-					p1.Cards = append(p1.Cards, card)
-					p1.totalCards()
-					fmt.Printf("You drew the card: %v of %s\n", card.Value, card.Suit)
-					if p1.Total > 21 {
-						fmt.Printf("You lost total: %d\n\n", p1.Total)
-						p2.Wins++
-						break
-					}
-					fmt.Printf("Your total: %d\n\n", p1.Total)
-					if p1.hasBlackJack() {
-						fmt.Printf("You won, you have blackjack\n\n")
-						p1.Wins++
-						break
-					}
-
-					if !p1Stay {
-						p2.totalCards()
-						if p2.Total < 16 {
-							card := deck.draw()
-							p2.Cards = append(p2.Cards, card)
-							fmt.Printf("%s drew the card: %v of %s\n\n", p2.Name, card.Value, card.Suit)
-							p2.totalCards()
-							if p2.Total > 21 {
-								fmt.Printf("You win, %s when bust with %d\n\n", p2.Name, p2.Total)
-								p1.Wins++
-								break
-							}
-							if p2.hasBlackJack() {
-								fmt.Printf("You lost, %s has blackjack\n\n", p2.Name)
-								p2.Wins++
-								break
-							}
-						} else {
-							p2Stay = true
-						}
-					}
-
-				} else {
-					p1Stay = true
-				}
-
-				p2.totalCards()
-				if p2.Total > 21 {
-					fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
-					p1.Wins++
-					break
-				}
-				if p2.Total == 21 {
-					fmt.Printf("You lost, dealer has blackjack\n\n")
-					p2.Wins++
-					break
-				}
-
-				if p1Stay && !p2Stay {
-					if p2.Total < 16 {
+			if !p1Stay {
+				fmt.Printf("What will you do, hit or stay [h, s]\n")
+				fmt.Scan(&action)
+				action = strings.ToLower(action)
+				if strings.Contains(action, "h") || strings.Contains(action, "s") {
+					if strings.Contains(action, "h") {
 						card := deck.draw()
-						p2.Cards = append(p2.Cards, card)
-						fmt.Printf("Dealer drew the card: %v of %s\n", card.Value, card.Suit)
-						p2.totalCards()
-						if p2.Total > 21 {
-							fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
-							p1.Wins++
-							break
-						}
-						if p2.hasBlackJack() {
-							fmt.Printf("You lost, dealer has blackjack\n\n")
+						p1.Cards = append(p1.Cards, card)
+						p1.totalCards()
+						fmt.Printf("You drew the card: %v of %s\n", card.Value, card.Suit)
+						if p1.Total > 21 {
+							fmt.Printf("You lost total: %d\n\n", p1.Total)
 							p2.Wins++
 							break
 						}
+						fmt.Printf("Your total: %d\n\n", p1.Total)
+						if p1.hasBlackJack() {
+							fmt.Printf("You won, you have blackjack\n\n")
+							p1.Wins++
+							break
+						}
 					} else {
-						p2Stay = true
+						p1Stay = true
 					}
 				}
+			}
 
-				if p1Stay && p2Stay {
-					p1.totalCards()
-					p2.totalCards()
-					if p1.Total > p2.Total {
-						fmt.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
-						p1.Wins++
-					} else {
-						fmt.Printf("You lost, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
-						p2.Wins++
-					}
+			p2.totalCards()
+			if p2.Total < 16 {
+				card := deck.draw()
+				p2.Cards = append(p2.Cards, card)
+				fmt.Printf("%s drew the card: %v of %s\n\n", p2.Name, card.Value, card.Suit)
+				p2.totalCards()
+				if p2.Total > 21 {
+					fmt.Printf("You win, %s when bust with %d\n\n", p2.Name, p2.Total)
+					p1.Wins++
+					break
+				}
+				if p2.hasBlackJack() {
+					fmt.Printf("You lost, %s has blackjack\n\n", p2.Name)
+					p2.Wins++
 					break
 				}
 			} else {
-				fmt.Println("hit or stay [h, s]")
-				continue
+				p2Stay = true
 			}
 
+			p2.totalCards()
+			if p2.Total > 21 {
+				fmt.Printf("You win, dealer when bust with %d\n\n", p2.Total)
+				p1.Wins++
+				break
+			}
+			if p2.Total == 21 {
+				fmt.Printf("You lost, dealer has blackjack\n\n")
+				p2.Wins++
+				break
+			}
+
+			if p1Stay && p2Stay {
+				p1.totalCards()
+				p2.totalCards()
+				if p1.Total > p2.Total {
+					fmt.Printf("You win, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
+					p1.Wins++
+				} else {
+					fmt.Printf("You lost, dealer had: %d and you had: %d \n\n", p2.Total, p1.Total)
+					p2.Wins++
+				}
+				break
+			}
 		}
-		fmt.Println("play again?")
+
+		fmt.Println("play again? [y, n]")
 		for {
 			fmt.Scan(&action)
 			if strings.Contains(strings.ToLower(action), "y") {
-				p1.Total = 0
-				p1.Cards = []Card{}
-				p2.Total = 0
-				p2.Cards = []Card{}
 				fmt.Printf("\n\n")
 				break
 			}
-			fmt.Printf("You won %d games.  The dealer won %d games\n", p1.Wins, p2.Wins)
+			fmt.Printf("You won %d games.  The %s won %d games\n", p1.Wins, p2.Name, p2.Wins)
 			return
 		}
 	}
