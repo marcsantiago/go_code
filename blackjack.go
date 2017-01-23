@@ -126,8 +126,11 @@ func (p *Player) hasBlackJack() bool {
 }
 
 func main() {
+	p1Color := color.New(color.FgHiBlue, color.Bold).SprintFunc()
+	p2Color := color.New(color.FgHiMagenta, color.Bold).SprintFunc()
 
 	win := color.New(color.FgGreen, color.Bold)
+	cardColor := color.New(color.FgYellow, color.Bold).SprintFunc()
 	lose := color.New(color.FgRed, color.Bold)
 
 	deck := Deck{}
@@ -156,10 +159,12 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("%s your cards are: ", p1.Name)
+		fmt.Printf("%s your cards are: ", p1Color(p1.Name))
 		for i := 0; i < len(p1.Cards); i++ {
-			fmt.Printf("%v of %s\n", p1.Cards[i].Value, p1.Cards[i].Suit)
+			fmt.Printf("%v of %s, ", cardColor(p1.Cards[i].Value), cardColor(p1.Cards[i].Suit))
 		}
+		fmt.Printf("\n")
+
 		p1.totalCards()
 		fmt.Printf("Total: %d\n\n", p1.Total)
 		if p1.hasBlackJack() {
@@ -168,7 +173,7 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("%s shows 1 card: %v of %s\n", p2.Name, p2.Cards[0].Value, p2.Cards[0].Suit)
+		fmt.Printf("%s shows 1 card: %v of %s\n", p2Color(p2.Name), cardColor(p2.Cards[0].Value), cardColor(p2.Cards[0].Suit))
 
 		var action string
 		var p1Stay = false
@@ -183,7 +188,7 @@ func main() {
 						card := deck.draw()
 						p1.Cards = append(p1.Cards, card)
 						p1.totalCards()
-						fmt.Printf("You drew the card: %v of %s\n", card.Value, card.Suit)
+						fmt.Printf("You drew the card: %v of %s\n", cardColor(card.Value), cardColor(card.Suit))
 						if p1.Total > 21 {
 							lose.Printf("You lost total: %d\n\n", p1.Total)
 							p2.Wins++
@@ -205,15 +210,15 @@ func main() {
 			if p2.Total < 16 {
 				card := deck.draw()
 				p2.Cards = append(p2.Cards, card)
-				fmt.Printf("%s drew the card: %v of %s\n\n", p2.Name, card.Value, card.Suit)
+				fmt.Printf("%s drew the card: %v of %s\n\n", p2Color(p2.Name), cardColor(card.Value), cardColor(card.Suit))
 				p2.totalCards()
 				if p2.Total > 21 {
-					win.Printf("You win, %s when bust with %d\n\n", p2.Name, p2.Total)
+					win.Printf("You win, %s when bust with %d\n\n", p2Color(p2.Name), p2.Total)
 					p1.Wins++
 					break
 				}
 				if p2.hasBlackJack() {
-					lose.Printf("You lost, %s has blackjack\n\n", p2.Name)
+					lose.Printf("You lost, %s has blackjack\n\n", p2Color(p2.Name))
 					p2.Wins++
 					break
 				}
@@ -254,7 +259,7 @@ func main() {
 				fmt.Printf("\n\n")
 				break
 			}
-			win.Printf("You won %d games.  The %s won %d games\n", p1.Wins, p2.Name, p2.Wins)
+			win.Printf("You won %d games.  The %s won %d games\n", p1.Wins, p2Color(p2.Name), p2.Wins)
 			return
 		}
 	}
