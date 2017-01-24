@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -14,8 +15,8 @@ const (
 	computer = "computer"
 )
 
-func checkBoard(b []string) bool {
-	return false
+func checkBoard(b []string) (bool, error) {
+	return false, nil
 }
 
 func drawBoard(b []string) {
@@ -88,9 +89,14 @@ func main() {
 				board[move] = x
 				turn = 1
 				drawBoard(board)
-				win := checkBoard(board)
+				win, err := checkBoard(board)
+				if err != nil {
+					fmt.Println("Game is a tie")
+					break
+				}
 				if win {
 					fmt.Println("Player 1 Wins")
+					break
 				}
 
 			} else {
@@ -100,12 +106,29 @@ func main() {
 				board[move] = o
 				turn = 0
 				drawBoard(board)
-				win := checkBoard(board)
+				win, err := checkBoard(board)
+				if err != nil {
+					fmt.Println("Game is a tie")
+					break
+				}
 				if win {
 					fmt.Println("Player 2 Wins")
+					break
 				}
 			}
 		}
+
+		for {
+			fmt.Println("Would you like to play again? (yes, no)")
+			var input string
+			fmt.Scan(&input)
+			if strings.Contains(strings.ToLower(input), "y") {
+				break
+			}
+			quit = true
+			break
+		}
+
 	}
 
 }
