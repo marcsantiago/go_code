@@ -19,22 +19,15 @@ const (
 )
 
 func checkBoard(bo []string, le string) (bool, error) {
-	win := ((bo[7] == le && bo[8] == le && bo[9] == le) || // across the top
-		(bo[4] == le && bo[5] == le && bo[6] == le) || // across the middle
-		(bo[1] == le && bo[2] == le && bo[3] == le) || // across the bottom
-		(bo[7] == le && bo[4] == le && bo[1] == le) || // down the left side
-		(bo[8] == le && bo[5] == le && bo[2] == le) || // down the middle
-		(bo[9] == le && bo[6] == le && bo[3] == le) || // down the right side
-		(bo[7] == le && bo[5] == le && bo[3] == le) || // diagonal
-		(bo[9] == le && bo[5] == le && bo[1] == le)) // diagonal
-
+	win := (bo[0] == le && bo[1] == le && bo[2] == le) || (bo[3] == le && bo[4] == le && bo[5] == le) || (bo[6] == le && bo[7] == le && bo[8] == le) || (bo[0] == le && bo[3] == le && bo[6] == le) || (bo[1] == le && bo[4] == le && bo[7] == le) || (bo[2] == le && bo[5] == le && bo[8] == le) || (bo[0] == le && bo[4] == le && bo[8] == le) || (bo[2] == le && bo[4] == le && bo[6] == le)
+	fmt.Printf("%v %v %v\n", bo, le, win)
 	if win {
 		return true, nil
 	}
 
 	empty := false
-	for i := 0; i < 10; i++ {
-		if bo[0] == " " {
+	for i := 0; i < 9; i++ {
+		if bo[i] == " " {
 			empty = true
 			break
 		}
@@ -119,6 +112,7 @@ func main() {
 				board[move] = fmt.Sprintf("%s", xColor(x))
 				turn = 1
 				drawBoard(board)
+				fmt.Println("")
 				win, err := checkBoard(board, x)
 				if err != nil {
 					fmt.Println("Game is a tie")
@@ -136,6 +130,7 @@ func main() {
 				board[move] = fmt.Sprintf("%s", oColor(o))
 				turn = 0
 				drawBoard(board)
+				fmt.Println("")
 				win, err := checkBoard(board, o)
 				if err != nil {
 					fmt.Println("Game is a tie")
