@@ -18,9 +18,19 @@ const (
 	computer = "computer"
 )
 
+var (
+	xColor = color.New(color.FgHiBlue, color.Bold).SprintFunc()
+	oColor = color.New(color.FgHiRed, color.Bold).SprintFunc()
+)
+
 func checkBoard(bo []string, le string) (bool, error) {
+	if le == x {
+		le = fmt.Sprintf("%s", xColor(le))
+	} else {
+		le = fmt.Sprintf("%s", oColor(le))
+	}
+
 	win := (bo[0] == le && bo[1] == le && bo[2] == le) || (bo[3] == le && bo[4] == le && bo[5] == le) || (bo[6] == le && bo[7] == le && bo[8] == le) || (bo[0] == le && bo[3] == le && bo[6] == le) || (bo[1] == le && bo[4] == le && bo[7] == le) || (bo[2] == le && bo[5] == le && bo[8] == le) || (bo[0] == le && bo[4] == le && bo[8] == le) || (bo[2] == le && bo[4] == le && bo[6] == le)
-	fmt.Printf("%v %v %v\n", bo, le, win)
 	if win {
 		return true, nil
 	}
@@ -88,8 +98,6 @@ func getMove(board []string) int {
 
 func main() {
 	var board []string
-	xColor := color.New(color.FgHiBlue, color.Bold).SprintFunc()
-	oColor := color.New(color.FgHiRed, color.Bold).SprintFunc()
 	fmt.Println("Welcome")
 	quit := false
 	for {
