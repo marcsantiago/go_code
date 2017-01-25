@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -17,16 +18,41 @@ const (
 	computer = "computer"
 )
 
-func checkBoard(b []string) (bool, error) {
+func checkBoard(bo []string, le string) (bool, error) {
+	win := ((bo[7] == le && bo[8] == le && bo[9] == le) || // across the top
+		(bo[4] == le && bo[5] == le && bo[6] == le) || // across the middle
+		(bo[1] == le && bo[2] == le && bo[3] == le) || // across the bottom
+		(bo[7] == le && bo[4] == le && bo[1] == le) || // down the left side
+		(bo[8] == le && bo[5] == le && bo[2] == le) || // down the middle
+		(bo[9] == le && bo[6] == le && bo[3] == le) || // down the right side
+		(bo[7] == le && bo[5] == le && bo[3] == le) || // diagonal
+		(bo[9] == le && bo[5] == le && bo[1] == le)) // diagonal
+
+	if win {
+		return true, nil
+	}
+
+	empty := false
+	for i := 0; i < 10; i++ {
+		if bo[0] == " " {
+			empty = true
+			break
+		}
+	}
+
+	if !empty {
+		return false, errors.New("Board is full")
+	}
+
 	return false, nil
 }
 
-func drawBoard(b []string) {
-	fmt.Printf("   | %s | %s | %s |\n", b[0], b[1], b[2])
+func drawBoard(bo []string) {
+	fmt.Printf("   | %s | %s | %s |\n", bo[0], bo[1], bo[2])
 	fmt.Printf("-------------------\n")
-	fmt.Printf("   | %s | %s | %s |\n", b[3], b[4], b[5])
+	fmt.Printf("   | %s | %s | %s |\n", bo[3], bo[4], bo[5])
 	fmt.Printf("-------------------\n")
-	fmt.Printf("   | %s | %s | %s |\n", b[6], b[7], b[8])
+	fmt.Printf("   | %s | %s | %s |\n", bo[6], bo[7], bo[8])
 	return
 }
 
@@ -93,7 +119,7 @@ func main() {
 				board[move] = fmt.Sprintf("%s", xColor(x))
 				turn = 1
 				drawBoard(board)
-				win, err := checkBoard(board)
+				win, err := checkBoard(board, x)
 				if err != nil {
 					fmt.Println("Game is a tie")
 					break
@@ -110,7 +136,7 @@ func main() {
 				board[move] = fmt.Sprintf("%s", oColor(o))
 				turn = 0
 				drawBoard(board)
-				win, err := checkBoard(board)
+				win, err := checkBoard(board, o)
 				if err != nil {
 					fmt.Println("Game is a tie")
 					break
