@@ -5,6 +5,8 @@ import (
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 const (
@@ -67,6 +69,8 @@ func getMove(board []string) int {
 
 func main() {
 	var board []string
+	xColor := color.New(color.FgHiBlue, color.Bold).SprintFunc()
+	oColor := color.New(color.FgHiRed, color.Bold).SprintFunc()
 	fmt.Println("Welcome")
 	quit := false
 	for {
@@ -86,7 +90,7 @@ func main() {
 			if turn == 0 {
 				fmt.Println("Player 1's turn")
 				move := getMove(board)
-				board[move] = x
+				board[move] = fmt.Sprintf("%s", xColor(x))
 				turn = 1
 				drawBoard(board)
 				win, err := checkBoard(board)
@@ -103,7 +107,7 @@ func main() {
 				// player2
 				fmt.Println("Player 2's turn")
 				move := getMove(board)
-				board[move] = o
+				board[move] = fmt.Sprintf("%s", oColor(o))
 				turn = 0
 				drawBoard(board)
 				win, err := checkBoard(board)
