@@ -5,27 +5,25 @@ import (
 )
 
 func main() {
-	var balance = 100.00
-	var fee = 0.50
-	// neat way of shorting the print function
-	var print = fmt.Println
-	var exit = true
+	balance := 100.00
+	fee := 0.50
+	exit := true
 	var widthdrawl int
 	for {
+		if exit {
+			break
+		}
 		fmt.Scan(&widthdrawl)
 		if widthdrawl%20 != 0 {
-			print("Please try again.  Enter a multiple of 20")
+			fmt.Println("Please try again.  Enter a multiple of 20")
 			exit = false
 		} else if float64(widthdrawl)+fee > balance {
-			print("Error, widthdrawl amoun exceeds your balance of %s", balance)
+			fmt.Printf("Error, widthdrawl amoun exceeds your balance of %f", balance)
 			exit = false
 		} else {
 			exit = true
 		}
-		if exit {
-			print(exit)
-			break
-		}
+
 	}
-	print("Remaining balance = %s", balance-(float64(widthdrawl)+fee))
+	fmt.Printf("Remaining balance = %f", balance-(float64(widthdrawl)+fee))
 }

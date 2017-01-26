@@ -5,13 +5,13 @@ import "fmt"
 func main() {
 	var str string
 	fmt.Scan(&str)
-	fmt.Println(isPalidrome2(str))
+	fmt.Println(isPalidrome(str))
 }
 
 func isPalidrome(str string) bool {
 	var revStr string
 	for i := len(str) - 1; i >= 0; i-- {
-		revStr += str[i]
+		revStr += string(str[i])
 	}
 	if str == revStr {
 		return true

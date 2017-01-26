@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+// RangeLister ...
 type RangeLister struct {
 	list []int
 }
