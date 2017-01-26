@@ -96,8 +96,61 @@ func getMove(board []string) int {
 	}
 }
 
-func getMoveComputer(board []string) int {
-	return 0
+func createCopy(board []string) []string {
+	copy := make([]string, 9)
+	for _, n := range board {
+		copy = append(copy, n)
+	}
+	return copy
+}
+
+func getMoveComputer(board []string) (int, error) {
+	// check to see if I can win
+	for i := 0; i < 10; i++ {
+		copy := createCopy(board)
+		if copy[i] == " " {
+			copy[i] = fmt.Sprintf("%s", oColor(o))
+			win, err := checkBoard(copy, o)
+			if err == nil {
+				if win {
+					return i, nil
+				}
+			}
+		}
+	}
+
+	// block player is they can win
+	for i := 0; i < 10; i++ {
+		copy := createCopy(board)
+		if copy[i] == " " {
+			copy[i] = fmt.Sprintf("%s", oColor(x))
+			win, err := checkBoard(copy, x)
+			if err == nil {
+				if win {
+					return i, nil
+				}
+			}
+		}
+	}
+
+	// try for a corner
+	corners := []int{0, 2, 6, 8}
+	for _, c := range corners {
+		if board[c] == " " {
+			return c, nil
+		}
+	}
+	// try middle
+	if board[4] == " " {
+		return 4, nil
+	}
+
+	for i := 0; i < 10; i++ {
+		if board[i] == " " {
+			return i, nil
+		}
+	}
+	return 0, errors.New("No moves left")
 }
 
 func main() {
@@ -188,19 +241,25 @@ func main() {
 
 				} else {
 					// computer
-					fmt.Println("Computers 2's turn")
-					move := getMoveComputer(board)
-					board[move] = fmt.Sprintf("%s", oColor(o))
 					turn = 0
-					drawBoard(board)
+					fmt.Println("Computers 2's turn")
+					move, err := getMoveComputer(board)
+					if err != nil {
+						drawBoard(board)
+						fmt.Println("Game is a tie")
+						break
+					}
+
+					board[move] = fmt.Sprintf("%s", oColor(o))
 					fmt.Println("")
 					win, err := checkBoard(board, o)
 					if err != nil {
 						fmt.Println("Game is a tie")
 						break
 					}
+					drawBoard(board)
 					if win {
-						fmt.Println("Player 2 Wins")
+						fmt.Println("Computer Wins")
 						break
 					}
 				}
