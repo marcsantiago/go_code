@@ -129,7 +129,7 @@ func getMoveComputer(board []string) (int, error) {
 	for i := 0; i < 9; i++ {
 		copy := createCopy(board)
 		if copy[i] == " " {
-			copy[i] = fmt.Sprintf("%s", oColor(x))
+			copy[i] = fmt.Sprintf("%s", xColor(x))
 			win, _ := checkBoard(copy, x)
 			if win {
 				return i, nil
