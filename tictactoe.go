@@ -105,17 +105,19 @@ func createCopy(board []string) []string {
 }
 
 func getMoveComputer(board []string) (int, error) {
-	// check to see if I can win
+	// check to see if computer can win
+	// THIS LOGIC IS BROKEN.  NOT ALL THE LOOPS TRIGGER,
+	// COMP DOESNT RETURN A WIN OR A BLOCK
+	// IT GOES STRAIGHT FOR CONERS AND DOES NOTHING ELSE
 	for i := 0; i < 10; i++ {
 		copy := createCopy(board)
 		if copy[i] == " " {
 			copy[i] = fmt.Sprintf("%s", oColor(o))
-			win, err := checkBoard(copy, o)
-			if err == nil {
-				if win {
-					return i, nil
-				}
+			win, _ := checkBoard(copy, o)
+			if win {
+				return i, nil
 			}
+
 		}
 	}
 
@@ -124,11 +126,9 @@ func getMoveComputer(board []string) (int, error) {
 		copy := createCopy(board)
 		if copy[i] == " " {
 			copy[i] = fmt.Sprintf("%s", oColor(x))
-			win, err := checkBoard(copy, x)
-			if err == nil {
-				if win {
-					return i, nil
-				}
+			win, _ := checkBoard(copy, x)
+			if win {
+				return i, nil
 			}
 		}
 	}
@@ -178,10 +178,16 @@ func main() {
 		if turn == 0 {
 			fmt.Println("Player 1 goes first")
 		} else {
-			fmt.Println("Player 2 goes first")
+			if mode == 1 {
+				fmt.Println("Computer goes first")
+			}
 		}
+
 		board = []string{" ", " ", " ", " ", " ", " ", " ", " ", " "}
-		drawBoard(board)
+		if mode == 1 && turn == 0 {
+			drawBoard(board)
+		}
+
 		for {
 			if mode == 0 {
 				// player1
