@@ -66,6 +66,14 @@ func whoGoesfirst() int {
 	return r.Perm(2)[0]
 }
 
+func chooseRandomMoveFromList(items []int) int {
+	t := time.Now()
+	source := rand.NewSource(t.Unix())
+	r := rand.New(source)
+	n := r.Perm(len(items))[0]
+	return items[n]
+}
+
 func getMove(board []string) int {
 	possibleInput := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 	for {
@@ -97,7 +105,7 @@ func getMove(board []string) int {
 }
 
 func createCopy(board []string) []string {
-	copy := make([]string, 9)
+	copy := []string{}
 	for _, n := range board {
 		copy = append(copy, n)
 	}
@@ -106,10 +114,7 @@ func createCopy(board []string) []string {
 
 func getMoveComputer(board []string) (int, error) {
 	// check to see if computer can win
-	// THIS LOGIC IS BROKEN.  NOT ALL THE LOOPS TRIGGER,
-	// COMP DOESNT RETURN A WIN OR A BLOCK
-	// IT GOES STRAIGHT FOR CONERS AND DOES NOTHING ELSE
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 9; i++ {
 		copy := createCopy(board)
 		if copy[i] == " " {
 			copy[i] = fmt.Sprintf("%s", oColor(o))
@@ -117,12 +122,11 @@ func getMoveComputer(board []string) (int, error) {
 			if win {
 				return i, nil
 			}
-
 		}
 	}
 
-	// block player is they can win
-	for i := 0; i < 10; i++ {
+	// block player is they can't win
+	for i := 0; i < 9; i++ {
 		copy := createCopy(board)
 		if copy[i] == " " {
 			copy[i] = fmt.Sprintf("%s", oColor(x))
@@ -135,21 +139,31 @@ func getMoveComputer(board []string) (int, error) {
 
 	// try for a corner
 	corners := []int{0, 2, 6, 8}
+	emptySpaces := []int{}
 	for _, c := range corners {
 		if board[c] == " " {
-			return c, nil
+			emptySpaces = append(emptySpaces, c)
 		}
 	}
+	if len(emptySpaces) > 0 {
+		return chooseRandomMoveFromList(emptySpaces), nil
+	}
+
 	// try middle
 	if board[4] == " " {
 		return 4, nil
 	}
 
-	for i := 0; i < 10; i++ {
+	emptySpaces = []int{}
+	for i := 0; i < 9; i++ {
 		if board[i] == " " {
-			return i, nil
+			emptySpaces = append(emptySpaces, i)
 		}
 	}
+	if len(emptySpaces) > 0 {
+		return chooseRandomMoveFromList(emptySpaces), nil
+	}
+
 	return 0, errors.New("No moves left")
 }
 
