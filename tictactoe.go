@@ -96,9 +96,26 @@ func getMove(board []string) int {
 	}
 }
 
+func getMoveComputer(board []string) int {
+	return 0
+}
+
 func main() {
 	var board []string
 	fmt.Println("Welcome")
+	fmt.Println("Pick mode")
+
+	var mode int
+	for {
+		fmt.Println("Play two player mode or vesus the computer  (0, 1)")
+		_, err := fmt.Scan(&mode)
+		if err != nil && mode > 1 {
+			fmt.Println("Invalid entry, please enter either a 0 or a 1")
+			continue
+		}
+		break
+	}
+
 	quit := false
 	for {
 		if quit {
@@ -113,40 +130,79 @@ func main() {
 		board = []string{" ", " ", " ", " ", " ", " ", " ", " ", " "}
 		drawBoard(board)
 		for {
-			// player1
-			if turn == 0 {
-				fmt.Println("Player 1's turn")
-				move := getMove(board)
-				board[move] = fmt.Sprintf("%s", xColor(x))
-				turn = 1
-				drawBoard(board)
-				fmt.Println("")
-				win, err := checkBoard(board, x)
-				if err != nil {
-					fmt.Println("Game is a tie")
-					break
-				}
-				if win {
-					fmt.Println("Player 1 Wins")
-					break
-				}
+			if mode == 0 {
+				// player1
+				if turn == 0 {
+					fmt.Println("Player 1's turn")
+					move := getMove(board)
+					board[move] = fmt.Sprintf("%s", xColor(x))
+					turn = 1
+					drawBoard(board)
+					fmt.Println("")
+					win, err := checkBoard(board, x)
+					if err != nil {
+						fmt.Println("Game is a tie")
+						break
+					}
+					if win {
+						fmt.Println("Player 1 Wins")
+						break
+					}
 
-			} else {
-				// player2
-				fmt.Println("Player 2's turn")
-				move := getMove(board)
-				board[move] = fmt.Sprintf("%s", oColor(o))
-				turn = 0
-				drawBoard(board)
-				fmt.Println("")
-				win, err := checkBoard(board, o)
-				if err != nil {
-					fmt.Println("Game is a tie")
-					break
+				} else {
+					// player2
+					fmt.Println("Player 2's turn")
+					move := getMove(board)
+					board[move] = fmt.Sprintf("%s", oColor(o))
+					turn = 0
+					drawBoard(board)
+					fmt.Println("")
+					win, err := checkBoard(board, o)
+					if err != nil {
+						fmt.Println("Game is a tie")
+						break
+					}
+					if win {
+						fmt.Println("Player 2 Wins")
+						break
+					}
 				}
-				if win {
-					fmt.Println("Player 2 Wins")
-					break
+			} else {
+				// player1
+				if turn == 0 {
+					fmt.Println("Player 1's turn")
+					move := getMove(board)
+					board[move] = fmt.Sprintf("%s", xColor(x))
+					turn = 1
+					drawBoard(board)
+					fmt.Println("")
+					win, err := checkBoard(board, x)
+					if err != nil {
+						fmt.Println("Game is a tie")
+						break
+					}
+					if win {
+						fmt.Println("Player 1 Wins")
+						break
+					}
+
+				} else {
+					// computer
+					fmt.Println("Computers 2's turn")
+					move := getMoveComputer(board)
+					board[move] = fmt.Sprintf("%s", oColor(o))
+					turn = 0
+					drawBoard(board)
+					fmt.Println("")
+					win, err := checkBoard(board, o)
+					if err != nil {
+						fmt.Println("Game is a tie")
+						break
+					}
+					if win {
+						fmt.Println("Player 2 Wins")
+						break
+					}
 				}
 			}
 		}
