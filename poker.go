@@ -347,19 +347,22 @@ func showHand(p *Player) {
 	}
 }
 
-// this is the dirty way to remove cards, I have to research slice "magic" to remove by index
-// properly
-func removeCard(p *Player, selected int) {
-	cards := []Card{}
-	for i, c := range p.Cards {
-		if selected-1 != i {
-			cards = append(cards, c)
+func (p *Player) removeCard(selected []int) {
+	cardsToRemove := []Card{}
+	for _, s := range selected {
+		cardsToRemove = append(cardsToRemove, p.Cards[s-1])
+	}
+	for _, card := range cardsToRemove {
+		deleted := 0
+		for i := range p.Cards {
+			j := i - deleted
+			if p.Cards[j] == card {
+				p.Cards = p.Cards[:j+copy(p.Cards[j:], p.Cards[j+1:])]
+				fmt.Printf("here: %v   %d\n\n", p.Cards, len(p.Cards))
+				deleted++
+			}
 		}
 	}
-	fmt.Printf("cards: %v\n", cards)
-	p.Cards = []Card{}
-	p.Cards = cards
-	fmt.Printf("player cards: %v\n", p.Cards)
 }
 
 func main() {
@@ -392,9 +395,7 @@ func main() {
 				for {
 
 					if len(selected) == discard {
-						for _, s := range selected {
-							removeCard(&player, s)
-						}
+						player.removeCard(selected)
 						break
 					}
 					_, err := fmt.Scan(&input)
