@@ -195,11 +195,10 @@ func initHand(deck *Deck, p *Player, c *Player) {
 	p.Cards = Hand{}
 	c.Cards = Hand{}
 	for i := 0; i < 10; i++ {
-		card := deck.draw()
 		if i%2 == 0 {
-			p.Cards = append(p.Cards, card)
+			p.Cards = append(p.Cards, deck.draw())
 		} else {
-			c.Cards = append(c.Cards, card)
+			c.Cards = append(c.Cards, deck.draw())
 		}
 	}
 }
@@ -278,11 +277,12 @@ func checkHand(hand Hand) (string, int) {
 	future = 1
 	for i := range hand {
 		if future < len(hand) {
-			if hand[i].Value+1 != hand[future].Value {
+			if hand[i].Value != hand[future].Value {
 				straight = false
 				break
 			}
 		}
+		future++
 	}
 	if straight {
 		return "straight", 0
@@ -450,9 +450,9 @@ func computerLogic(comp *Player, deck *Deck) (string, int) {
 func main() {
 	deck := Deck{}
 	deck.createDeck()
-	deck.shuffle()
 	// game loop
 	for {
+		deck.shuffle()
 		initHand(&deck, &player, &computer) // alternating 5 card draw
 		// main game
 		for {
