@@ -133,18 +133,42 @@ func checkHand(hand Hand) (string, int) {
 			return "flush", 0
 		}
 	}
+
 	// check for straight
 	straight := true
 	future = 1
 	for i := range hand {
 		if future < len(hand) {
-			if hand[i].Value != hand[future].Value {
+			cardValue := hand[i].Value
+			futureValue := hand[future].Value
+
+			if hand[i].IsRoyal {
+				if hand[i].RoyalType == royal("jack") {
+					cardValue = 11
+				} else if hand[i].RoyalType == royal("jack") {
+					cardValue = 12
+				} else if hand[i].RoyalType == royal("king") {
+					cardValue = 13
+				}
+			}
+			if hand[future].IsRoyal {
+				if hand[i].RoyalType == royal("jack") {
+					futureValue = 11
+				} else if hand[i].RoyalType == royal("jack") {
+					futureValue = 12
+				} else if hand[i].RoyalType == royal("king") {
+					futureValue = 13
+				}
+			}
+
+			if cardValue+1 != futureValue {
 				straight = false
 				break
 			}
 		}
 		future++
 	}
+
 	if straight {
 		return "straight", 0
 	}
@@ -319,89 +343,87 @@ func initHand(deck *Deck, p *Player, c *Player) {
 func main() {
 	deck := Deck{}
 	deck.CreateDeck()
+	deck.Shuffle()
 	// game loop
 	for {
-		deck.Shuffle()
 		initHand(&deck, &player, &computer) // alternating 5 card Draw
-		// main game
+
+		fmt.Printf("Player Draw 5 cards\n")
+		ShowHand(&player)
+		var discard int
 		for {
-			fmt.Printf("Player Draw 5 cards\n")
+			fmt.Printf("How many cards would like you to discard? (0-5)\n")
+			_, err := fmt.Scan(&discard)
+			if err != nil {
+				fmt.Printf("Please only enter a digit between 0 and 5 inclusive\n")
+				continue
+			}
+			break
+		}
+
+		if discard > 0 {
 			ShowHand(&player)
-			var discard int
+			fmt.Printf("Please choose which cards to discard (0-5)\n")
+			selected := []int{}
+			var input int
 			for {
-				fmt.Printf("How many cards would like you to discard? (0-5)\n")
-				_, err := fmt.Scan(&discard)
+
+				if len(selected) == discard {
+					player.RemoveCard(selected)
+					break
+				}
+				_, err := fmt.Scan(&input)
 				if err != nil {
-					fmt.Printf("Please only enter a digit between 0 and 5 inclusive\n")
+					fmt.Printf("Please only enter a digit between 1 and 5 inclusive\n")
+					ShowHand(&player)
 					continue
 				}
-				break
+				selected = append(selected, input)
 			}
-
-			if discard > 0 {
-				ShowHand(&player)
-				fmt.Printf("Please choose which cards to discard (0-5)\n")
-				selected := []int{}
-				var input int
-				for {
-
-					if len(selected) == discard {
-						player.RemoveCard(selected)
-						break
-					}
-					_, err := fmt.Scan(&input)
-					if err != nil {
-						fmt.Printf("Please only enter a digit between 1 and 5 inclusive\n")
-						ShowHand(&player)
-						continue
-					}
-					selected = append(selected, input)
-				}
-				fmt.Printf("Picking up %d more cards\n", discard)
-				for i := 0; i < discard; i++ {
-					player.Cards = append(player.Cards, deck.Draw())
-				}
+			fmt.Printf("Picking up %d more cards\n", discard)
+			for i := 0; i < discard; i++ {
+				player.Cards = append(player.Cards, deck.Draw())
 			}
 			fmt.Printf("New hand\n")
 			ShowHand(&player)
 			fmt.Printf("\n\n")
-
-			player1HandName, baseScore := checkHand(player.Cards)
-			player1Score := baseScore
-			if player1Score == 0 {
-				player1Score = score[player1HandName]
-			}
-			player.TotalScore = player.TotalScore + player1Score
-
-			computerHandName, baseScore := computerLogic(&computer, &deck)
-			computerScore := baseScore
-			if computerScore == 0 {
-				computerScore = score[computerHandName]
-			}
-			computer.TotalScore = computer.TotalScore + computerScore
-
-			if computerScore > player1Score {
-				fmt.Printf("Computer won with the hand: %s score: %d\n", computerHandName, computerScore)
-				computer.HandsWon++
-			} else {
-				fmt.Printf("Player1 won with the hand: %s score: %d\n", player1HandName, player1Score)
-				player.HandsWon++
-			}
-
-			// another game?
-			for {
-				fmt.Printf("play again? [y, n]\n")
-				var action string
-				fmt.Scan(&action)
-				if strings.Contains(strings.ToLower(action), "y") {
-					fmt.Printf("\n\n")
-					break
-				}
-				fmt.Printf("Player1 final score: %d\nPlayer1 total hands won %d\n", player.TotalScore, player.HandsWon)
-				fmt.Printf("Computer final score: %d\nComputer total hands won %d\n", computer.TotalScore, computer.HandsWon)
-				return
-			}
 		}
 
+		player1HandName, baseScore := checkHand(player.Cards)
+		player1Score := baseScore
+		if player1Score == 0 {
+			player1Score = score[player1HandName]
+		}
+		player.TotalScore = player.TotalScore + player1Score
+
+		computerHandName, baseScore := computerLogic(&computer, &deck)
+		computerScore := baseScore
+		if computerScore == 0 {
+			computerScore = score[computerHandName]
+		}
+		computer.TotalScore = computer.TotalScore + computerScore
+
+		if computerScore > player1Score {
+			fmt.Printf("Computer won with the hand: %s score: %d\n", computerHandName, computerScore)
+			computer.HandsWon++
+		} else {
+			fmt.Printf("Player1 won with the hand: %s score: %d\n", player1HandName, player1Score)
+			player.HandsWon++
+		}
+
+		// another game?
+		for {
+			fmt.Printf("play again? [y, n]\n")
+			var action string
+			fmt.Scan(&action)
+			if strings.Contains(strings.ToLower(action), "y") {
+				fmt.Printf("\n\n")
+				break
+			}
+			fmt.Printf("Player1 final score: %d\nPlayer1 total hands won %d\n", player.TotalScore, player.HandsWon)
+			fmt.Printf("Computer final score: %d\nComputer total hands won %d\n", computer.TotalScore, computer.HandsWon)
+			return
+		}
 	}
+
 }
