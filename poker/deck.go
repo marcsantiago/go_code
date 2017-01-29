@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// SOMETIMES THERE ARE DUPLICATE CARDS... POSSIBLE MEMORY ISSUE ...
+
 // Card ...
 type Card struct {
 	Suit      string

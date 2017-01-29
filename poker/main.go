@@ -81,6 +81,7 @@ var (
 	}
 )
 
+// ISSUE WITH PAIR OF JACKS .. doesn't register as a pair
 func checkHand(hand Hand) (string, int) {
 	// check for royal flush
 	sort.Sort(hand)
@@ -145,7 +146,7 @@ func checkHand(hand Hand) (string, int) {
 			if hand[i].IsRoyal {
 				if hand[i].RoyalType == royal("jack") {
 					cardValue = 11
-				} else if hand[i].RoyalType == royal("jack") {
+				} else if hand[i].RoyalType == royal("queen") {
 					cardValue = 12
 				} else if hand[i].RoyalType == royal("king") {
 					cardValue = 13
@@ -154,7 +155,7 @@ func checkHand(hand Hand) (string, int) {
 			if hand[future].IsRoyal {
 				if hand[i].RoyalType == royal("jack") {
 					futureValue = 11
-				} else if hand[i].RoyalType == royal("jack") {
+				} else if hand[i].RoyalType == royal("queen") {
 					futureValue = 12
 				} else if hand[i].RoyalType == royal("king") {
 					futureValue = 13
@@ -248,7 +249,7 @@ func checkHand(hand Hand) (string, int) {
 				tot = tot + 13
 			} else if c.RoyalType == fmt.Sprintf("%s", royal("queen")) {
 				tot = tot + 12
-			} else {
+			} else if c.RoyalType == fmt.Sprintf("%s", royal("jack")) {
 				tot = tot + 11
 			}
 		} else {
