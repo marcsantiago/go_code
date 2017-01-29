@@ -251,14 +251,14 @@ func computerLogic(comp *Player, deck *Deck) (string, int) {
 	t := time.Now()
 	source := rand.NewSource(t.Unix())
 	r := rand.New(source)
-	n := r.Perm(6)[0] // number of cards to drop
+	n := r.Perm(5)[0] // number of cards to drop
 
 	selected := []int{}
 	for i := 0; i < n; i++ {
 		t := time.Now()
 		source := rand.NewSource(t.Unix())
 		r := rand.New(source)
-		n := r.Perm(6)[0] + 1
+		n := r.Perm(5)[0] + 1
 		contains := func(n int, sel []int) bool {
 			for _, s := range selected {
 				if n == s {
