@@ -1,7 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"strconv"
+	"strings"
 )
 
 type node struct {
@@ -14,37 +18,33 @@ type tree struct {
 	Root *node
 }
 
-func (t *tree) rosalindAdd(data int) {
-	nodeToAdd := node{
+func (t *tree) findRoot(data int) bool {
+	newNode := node{
 		Data: data,
 	}
-	if t.Root == nil {
-		t.Root = new(node)
+	if t.Root != nil {
+		if t.findRootLogic(t.Root, newNode) != nil {
+			return true
+		}
 	}
-	if t.Root.Data == 0 {
-		t.Root = &nodeToAdd
-		return
-	}
-	t.rosalindTranverseAdd(t.Root, nodeToAdd)
-	return
+	return false
 }
 
-func (t *tree) rosalindTranverseAdd(oldnode *node, newNode node) {
-	if newNode.Data < oldnode.Data {
-		if oldnode.Left == nil {
-			oldnode.Left = &newNode
-		} else {
-			t.tranverseAdd(oldnode.Left, newNode)
-		}
-	} else if newNode.Data > oldnode.Data {
-		if oldnode.Right == nil {
-			oldnode.Right = &newNode
-		} else {
-
-			t.rosalindTranverseAdd(oldnode.Right, newNode)
-		}
+func (t *tree) findRootLogic(search *node, target node) *node {
+	var returnNode *node
+	if search == nil {
+		return returnNode
 	}
-	return
+	if search.Data == target.Data {
+		return search
+	}
+
+	returnNode = t.findRootLogic(search.Left, target)
+	if returnNode == nil {
+		returnNode = t.findRootLogic(search.Right, target)
+	}
+	return returnNode
+
 }
 
 func (t *tree) add(data int) {
@@ -143,21 +143,49 @@ func (t *tree) countEdgesLogic(n *node, counter chan int) {
 }
 
 func main() {
+	// BASED ON http://rosalind.info/problems/tree/
+	// NOT CORRECT YET
 	t := new(tree)
+	b, err := ioutil.ReadFile("data.txt")
+	if err != nil {
+		panic(err)
+	}
+	s := string(b)
+	parts := strings.Split(s, "\n")
+	n := parts[0]
 
-	t.add(10)
-	t.add(4)
-	t.add(6)
-	// t.add(9)
-	// t.add(15)
-	// t.add(20)
-	// t.add(100)
-	// t.add(8)
-	// t.add(90)
+	startNode, _ := strconv.Atoi(n)
+	t.add(startNode)
 
-	// b, _ := json.MarshalIndent(t, "", " ")
-	// fmt.Println(string(b))
-	n := t.countEdges()
-	fmt.Println(n)
+	for {
+		counter := 1
+		oldSize := len(parts) - 1
+		newSize := oldSize
+		for _, part := range parts[1:] {
+			nums := strings.Split(part, " ")
+			if len(nums) == 2 {
+				toAdd, _ := strconv.Atoi(nums[0])
+				root, _ := strconv.Atoi(nums[1])
+				if t.findRoot(root) {
+					t.add(toAdd)
+					parts = parts[:counter+copy(parts[counter:], parts[counter+1:])]
+				} else if t.findRoot(toAdd) {
+					t.add(root)
+					parts = parts[:counter+copy(parts[counter:], parts[counter+1:])]
+				}
+
+			}
+			counter++
+		}
+		oldSize = len(parts) - 1
+		if newSize == oldSize {
+			break
+		}
+
+	}
+
+	b, _ = json.MarshalIndent(t, "", " ")
+	fmt.Println(string(b))
+	fmt.Println(t.countEdges())
 
 }
