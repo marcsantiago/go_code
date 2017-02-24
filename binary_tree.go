@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
@@ -48,6 +49,9 @@ func (t *Tree) findNode(search *node, target node) *node {
 
 // Add ...
 func (t *Tree) Add(data int) {
+	if data < 0 {
+		panic(errors.New("Only submit positive integers"))
+	}
 	nodeToAdd := node{
 		Data: data,
 	}
@@ -147,7 +151,6 @@ func (t *Tree) CountEdges() (edges int) {
 			break
 		}
 		edges++
-
 	}
 	return edges
 }
@@ -181,6 +184,60 @@ func (t *Tree) GenerateRandomTree() {
 	return
 }
 
+// GetRootData ...
+func (t *Tree) GetRootData() int {
+	return t.Root.Data
+}
+
+// TraversalGetVals ...
+func (t *Tree) TraversalGetVals() []int {
+	ch := make(chan int, 10)
+	arr := []int{}
+	if t.Root != nil {
+		currentNode := t.Root
+		if currentNode.Left == nil && currentNode.Right == nil {
+			return []int{currentNode.Data}
+		}
+		t.traversalGetVals(currentNode, ch)
+	}
+
+	for {
+		n := <-ch
+		if n == -1 {
+			break
+		}
+		arr = append(arr, n)
+	}
+	return arr
+}
+
+func (t *Tree) traversalGetVals(n *node, ch chan int) {
+	if n.Left != nil {
+		ch <- n.Left.Data
+		go t.traversalGetVals(n.Left, ch)
+	}
+
+	if n.Right != nil {
+		ch <- n.Right.Data
+		go t.traversalGetVals(n.Right, ch)
+	}
+	if n.Left == nil && n.Right == nil {
+		ch <- -1
+	}
+	return
+}
+
+// ShiftRoot ...
+func (t *Tree) ShiftRoot(newRoot int) {
+	arr := t.TraversalGetVals()
+	n := Tree{}
+	n.Add(newRoot)
+	for _, i := range arr {
+		n.Add(i)
+	}
+	*t = n
+}
+
 // PrintTree ...
 func (t *Tree) PrintTree() {
 	b, err := json.MarshalIndent(t, "", " ")
@@ -192,7 +249,16 @@ func (t *Tree) PrintTree() {
 
 func main() {
 	t := Tree{}
-	t.GenerateRandomTree()
+	// t.GenerateRandomTree()
+	// t.PrintTree()
+	t.Add(10)
+	t.Add(100)
+	t.Add(2)
+	t.Add(56)
+	t.Add(11)
+	t.PrintTree()
+	fmt.Printf("\n\n\n")
+	t.ShiftRoot(90)
 	t.PrintTree()
 
 }
