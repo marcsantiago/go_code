@@ -189,8 +189,8 @@ func (t *Tree) GetRootData() int {
 	return t.Root.Data
 }
 
-// TraversalGetVals ...
-func (t *Tree) TraversalGetVals() []int {
+// TreeToArray ...
+func (t *Tree) TreeToArray() []int {
 	ch := make(chan int, 10)
 	arr := []int{}
 	if t.Root != nil {
@@ -229,7 +229,7 @@ func (t *Tree) traversalGetVals(n *node, ch chan int) {
 
 // ShiftRoot ...
 func (t *Tree) ShiftRoot(newRoot int) {
-	arr := t.TraversalGetVals()
+	arr := t.TreeToArray()
 	n := Tree{}
 	n.Add(newRoot)
 	for _, i := range arr {
