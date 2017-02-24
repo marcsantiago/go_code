@@ -204,6 +204,7 @@ func (t *Tree) TreeToArray() []int {
 	for {
 		n := <-ch
 		if n == -1 {
+			close(ch)
 			break
 		}
 		arr = append(arr, n)
