@@ -1,7 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"math/rand"
+	"time"
 )
 
 type node struct {
@@ -15,20 +18,20 @@ type Tree struct {
 	Root *node
 }
 
-// FindRoot ...
-func (t *Tree) FindRoot(data int) bool {
+// FindNode ...
+func (t *Tree) FindNode(data int) bool {
 	newNode := node{
 		Data: data,
 	}
 	if t.Root != nil {
-		if t.findRoot(t.Root, newNode) != nil {
+		if t.findNode(t.Root, newNode) != nil {
 			return true
 		}
 	}
 	return false
 }
 
-func (t *Tree) findRoot(search *node, target node) *node {
+func (t *Tree) findNode(search *node, target node) *node {
 	var returnNode *node
 	if search == nil {
 		return returnNode
@@ -36,13 +39,11 @@ func (t *Tree) findRoot(search *node, target node) *node {
 	if search.Data == target.Data {
 		return search
 	}
-
-	returnNode = t.findRoot(search.Left, target)
+	returnNode = t.findNode(search.Left, target)
 	if returnNode == nil {
-		returnNode = t.findRoot(search.Right, target)
+		returnNode = t.findNode(search.Right, target)
 	}
 	return returnNode
-
 }
 
 // Add ...
@@ -103,6 +104,31 @@ func (t *Tree) inOrderTraversal(n *node) {
 	return
 }
 
+// Traversal ...
+func (t *Tree) Traversal() {
+	if t.Root != nil {
+		currentNode := t.Root
+		if currentNode.Left == nil && currentNode.Right == nil {
+			fmt.Println(currentNode.Data)
+		} else {
+			t.traversal(currentNode)
+		}
+	}
+	return
+}
+
+func (t *Tree) traversal(n *node) {
+	fmt.Println(n.Data)
+	if n.Left != nil {
+		t.traversal(n.Left)
+	}
+
+	if n.Right != nil {
+		t.traversal(n.Right)
+	}
+	return
+}
+
 // CountEdges ...
 func (t *Tree) CountEdges() (edges int) {
 	c := make(chan int, 10)
@@ -143,9 +169,30 @@ func (t *Tree) countEdges(n *node, counter chan int) {
 	return
 }
 
+// GenerateRandomTree ...
+func (t *Tree) GenerateRandomTree() {
+	u := time.Now()
+	source := rand.NewSource(u.Unix())
+	r := rand.New(source)
+	arr := r.Perm(1000)
+	for _, a := range arr {
+		t.Add(a)
+	}
+	return
+}
+
+// PrintTree ...
+func (t *Tree) PrintTree() {
+	b, err := json.MarshalIndent(t, "", " ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(b))
+}
+
 func main() {
 	t := Tree{}
-	t.Add(50)
-	t.Add(10)
-	t.Add(60)
+	t.GenerateRandomTree()
+	t.PrintTree()
+
 }
